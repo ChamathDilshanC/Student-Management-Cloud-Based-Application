@@ -1,0 +1,349 @@
+{
+  "info": {
+    "_postman_id": "student-management-api-collection",
+    "name": "Student Management API",
+    "description": "Complete REST API collection for the Student Management Cloud-Based Application.\n\nBase URL: http://localhost:8080\n\nAll POST and PUT requests use multipart/form-data.\nGET and DELETE requests require no body.\n\nFields:\n- fName (required): Student first name\n- lName (required): Student last name\n- contact (required, unique): Student contact number\n- address (required): Student address\n- profileImage (optional): Profile picture file (jpg, png, etc.)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "1",
+      "type": "string",
+      "description": "Change this to the ID of the student you want to GET, UPDATE, or DELETE"
+    }
+  ],
+  "item": [
+    {
+      "name": "Students",
+      "description": "CRUD operations for managing students",
+      "item": [
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "students"]
+            },
+            "description": "Returns a list of all students in the system.\n\nResponse: Array of StudentDTO objects with id, fName, lName, contact, address, and picture (URL)."
+          },
+          "response": [
+            {
+              "name": "200 OK - Students Found",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"fName\": \"Kamal\",\n    \"lName\": \"Perera\",\n    \"contact\": \"0771234567\",\n    \"address\": \"123 Galle Road, Colombo 03\",\n    \"picture\": \"/uploads/students/a1b2c3d4-uuid.jpg\"\n  },\n  {\n    \"id\": 2,\n    \"fName\": \"Nimal\",\n    \"lName\": \"Silva\",\n    \"contact\": \"0769876543\",\n    \"address\": \"45 Kandy Road, Kurunegala\",\n    \"picture\": null\n  }\n]"
+            },
+            {
+              "name": "200 OK - No Students",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[]"
+            }
+          ]
+        },
+        {
+          "name": "Get Student by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "students", "{{studentId}}"]
+            },
+            "description": "Returns a single student by their ID.\n\nPath Variable:\n- id: The student's numeric ID (e.g. 1)"
+          },
+          "response": [
+            {
+              "name": "200 OK - Student Found",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"fName\": \"Kamal\",\n  \"lName\": \"Perera\",\n  \"contact\": \"0771234567\",\n  \"address\": \"123 Galle Road, Colombo 03\",\n  \"picture\": \"/uploads/students/a1b2c3d4-uuid.jpg\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"timestamp\": \"2026-02-19T16:00:00.000+00:00\",\n  \"status\": 404,\n  \"error\": \"Not Found\",\n  \"message\": \"Student not found with id: 99\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Student (without photo)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "fName",
+                  "value": "Kamal",
+                  "description": "Student's first name (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "lName",
+                  "value": "Perera",
+                  "description": "Student's last name (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "contact",
+                  "value": "0771234567",
+                  "description": "Student's contact number (required, must be unique)",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "123 Galle Road, Colombo 03",
+                  "description": "Student's address (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "profileImage",
+                  "description": "Profile picture file (optional) - leave disabled if no image",
+                  "type": "file",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "students"]
+            },
+            "description": "Creates a new student record.\n\nSend as multipart/form-data:\n- fName (required): First name\n- lName (required): Last name\n- contact (required, unique): Phone number\n- address (required): Home address\n- profileImage (optional): Image file to upload as profile picture\n\nReturns 201 Created with the saved StudentDTO."
+          },
+          "response": [
+            {
+              "name": "201 Created - Student Saved",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"fName\": \"Kamal\",\n  \"lName\": \"Perera\",\n  \"contact\": \"0771234567\",\n  \"address\": \"123 Galle Road, Colombo 03\",\n  \"picture\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Student (with photo)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "fName",
+                  "value": "Nimal",
+                  "description": "Student's first name (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "lName",
+                  "value": "Silva",
+                  "description": "Student's last name (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "contact",
+                  "value": "0769876543",
+                  "description": "Student's contact number (required, must be unique)",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "45 Kandy Road, Kurunegala",
+                  "description": "Student's address (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "profileImage",
+                  "description": "Select an image file from your computer (jpg, png, gif, webp)",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "students"]
+            },
+            "description": "Creates a new student with a profile picture upload.\n\nSet profileImage to a local image file in Postman (click 'Select Files').\n\nReturns 201 Created with the picture field containing the URL path."
+          },
+          "response": [
+            {
+              "name": "201 Created - Student With Photo",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 2,\n  \"fName\": \"Nimal\",\n  \"lName\": \"Silva\",\n  \"contact\": \"0769876543\",\n  \"address\": \"45 Kandy Road, Kurunegala\",\n  \"picture\": \"/uploads/students/b5c6d7e8-uuid.png\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "fName",
+                  "value": "Kamal",
+                  "description": "Updated first name (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "lName",
+                  "value": "Perera",
+                  "description": "Updated last name (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "contact",
+                  "value": "0771234567",
+                  "description": "Updated contact number (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "55 Temple Road, Nugegoda",
+                  "description": "Updated address (required)",
+                  "type": "text"
+                },
+                {
+                  "key": "profileImage",
+                  "description": "New profile picture (optional) - if provided, replaces the old one",
+                  "type": "file",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "students", "{{studentId}}"]
+            },
+            "description": "Updates an existing student's details.\n\nPath Variable:\n- id: The student's numeric ID\n\nSend as multipart/form-data with all required fields.\nIf profileImage is provided, the old picture is replaced.\nIf omitted, the existing picture is kept.\n\nReturns 200 OK with the updated StudentDTO."
+          },
+          "response": [
+            {
+              "name": "200 OK - Student Updated",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"fName\": \"Kamal\",\n  \"lName\": \"Perera\",\n  \"contact\": \"0771234567\",\n  \"address\": \"55 Temple Road, Nugegoda\",\n  \"picture\": \"/uploads/students/a1b2c3d4-uuid.jpg\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"timestamp\": \"2026-02-19T16:00:00.000+00:00\",\n  \"status\": 404,\n  \"error\": \"Not Found\",\n  \"message\": \"Student not found with id: 99\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "students", "{{studentId}}"]
+            },
+            "description": "Deletes a student and their associated profile picture from storage.\n\nPath Variable:\n- id: The student's numeric ID\n\nReturns 204 No Content on success."
+          },
+          "response": [
+            {
+              "name": "204 No Content - Deleted",
+              "status": "No Content",
+              "code": 204,
+              "header": [],
+              "body": ""
+            },
+            {
+              "name": "404 Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"timestamp\": \"2026-02-19T16:00:00.000+00:00\",\n  \"status\": 404,\n  \"error\": \"Not Found\",\n  \"message\": \"Student not found with id: 99\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

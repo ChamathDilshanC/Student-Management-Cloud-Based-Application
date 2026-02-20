@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/student_db
+    username: postgres
+    password: YOUR_LOCAL_DB_PASSWORD
+    driver-class-name: org.postgresql.Driver
+
+# Storage mode: 'local' uses uploads/ folder, 'gcs' uses Google Cloud Storage
+app:
+  storage:
+    mode: local
+    upload-dir: uploads/
