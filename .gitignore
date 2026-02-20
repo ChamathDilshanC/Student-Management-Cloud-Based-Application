@@ -55,3 +55,6 @@ uploads/**/*
 ### Environment Variables ###
 .env
 .env.local
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-cloud.yml
+backend/src/main/resources/application.yml
